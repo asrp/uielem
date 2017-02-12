@@ -33,8 +33,10 @@ class UI(observed_tree):
         params = {k:v for k, v in kwargs.items() if not (k.startswith("on_")
                                                  or k.startswith("set_")
                                                  or k in special)}
-        self.elem = self.elemtype(kwargs.get("toplevel"), *self.args, **params)
-        self.toplevel = kwargs.get("toplevel", self.elem)
+        self.toplevel = getattr(self.parent, "toplevel", None)
+        self.elem = self.elemtype(self.toplevel, *self.args, **params)
+        if self.toplevel is None:
+            self.toplevel = self.elem
         self.elem.ui = self
         for k, v in kwargs.items():
             if k.startswith("on_"):
