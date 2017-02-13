@@ -107,13 +107,13 @@ class UI(observed_tree):
         else:
             self.insert(index, child, makeelem=True)
 
-    def append(self, element, makeelem=False):
+    def append(self, element, makeelem=True):
         observed_tree.append(self, element)
         if makeelem:
             element.makeelem()
         self.repack([element])
 
-    def insert(self, index, element, makeelem=False):
+    def insert(self, index, element, makeelem=True):
         observed_tree.insert(self, index, element)
         if makeelem:
             element.makeelem()
@@ -125,23 +125,23 @@ class UI(observed_tree):
 
     def move_child(self, child, newindex):
         elem = self.pop(child)
-        self.insert(newindex, child)
+        self.insert(newindex, child, makeelem=False)
 
     def move_by(self, child, diff):
         oldindex = self.index(child)
         newindex = oldindex + diff
         logging.debug("move_by new index: ", self, child, newindex)
         if 0 <= newindex < len(self):
-            self.insert(newindex, child)
+            self.insert(newindex, child, makeelem=False)
             return newindex
         else:
             return oldindex
 
     def setparent(self, newparent, newindex=None):
         if newindex == "end" or newindex is None:
-            newparent.append(self)
+            newparent.append(self, makeelem=False)
         else:
-            newparent.insert(newindex, self)
+            newparent.insert(newindex, self, makeelem=False)
         self.parent.repack()
 
     def remove(self, child, reparent=True):
@@ -151,6 +151,16 @@ class UI(observed_tree):
         elif self.geometry == 'place':
             child.elem.place_forget()
         self.repack()
+
+    def pop(self, index=-1):
+        child = self[index]
+        observed_tree.pop(self, index)
+        if self.geometry == 'pack':
+            child.elem.pack_forget()
+        elif self.geometry == 'place':
+            child.elem.place_forget()
+        self.repack()
+        return child
 
     def repack(self, children=None):
         if children is None:
