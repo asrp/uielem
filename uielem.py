@@ -130,7 +130,7 @@ class UI(observed_tree):
     def move_by(self, child, diff):
         oldindex = self.index(child)
         newindex = oldindex + diff
-        logging.debug("move_by new index: ", self, child, newindex)
+        logging.debug("move_by new index: %s %s %s", self, child, newindex)
         if 0 <= newindex < len(self):
             self.insert(newindex, child, makeelem=False)
             return newindex
