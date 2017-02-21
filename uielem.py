@@ -9,6 +9,9 @@ defaults = {"geometry": "pack",
             "packside": "top",
             "packanchor": "center"}
 
+special = ["name", "title", "child", "items", "showelem", "packside",
+           "packanchor", "geometry", "defaulttext", "toplevel"]
+
 class UI(observed_tree):
     def __init__(self, elemtype, *args, **kwargs):
         observed_tree.__init__(self, name=elemtype.__name__,
@@ -53,8 +56,6 @@ class UI(observed_tree):
 
     def generate(self):
         kwargs = self.kwargs
-        special = ["name", "title", "child", "items", "showelem", "packside",
-                   "packanchor", "geometry", "defaulttext", "toplevel"]
         if "command" in kwargs:
             bindlist.append((self, kwargs["command"]))
         params = {k:v for k, v in kwargs.items() if not (k.startswith("on_")
@@ -94,12 +95,20 @@ class UI(observed_tree):
     def __getattr__(self, key):
         if key in self.kwargs and not key.startswith("__"):
             return self.kwargs[key]
-        elif key in defaults:
-            return defaults[key]
         elif key == "children":
             return list(self)
         else:
             raise AttributeError, key
+
+    def __setattr__(self, key, value):
+        if hasattr(self, "kwargs") and key in self.kwargs and not key.startswith("__"):
+            self.kwargs[key] = value
+            if key in ["packside", "packanchor", "geometry"]:
+                self.repack()
+            elif key not in special:
+                self.elem[key] = value
+        else:
+            observed_tree.__setattr__(self, key, value)
 
     def add(self, child, index="end"):
         if index == "end":
