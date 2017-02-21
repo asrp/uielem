@@ -110,13 +110,21 @@ class UI(observed_tree):
     def append(self, element, makeelem=True):
         observed_tree.append(self, element)
         if makeelem:
-            element.makeelem()
+            try:
+                element.makeelem()
+            except:
+                observed_tree.pop(self)
+                raise
         self.repack([element])
 
     def insert(self, index, element, makeelem=True):
         observed_tree.insert(self, index, element)
         if makeelem:
-            element.makeelem()
+            try:
+                element.makeelem()
+            except:
+                observed_tree.pop(self, index)
+                raise
         self.repack()
 
     def move(self, newindex):
