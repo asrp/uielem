@@ -53,7 +53,7 @@ class UI(observed_tree):
 
     def generate(self):
         kwargs = self.kwargs
-        special = ["name", "title", "child", "items", "show", "packside",
+        special = ["name", "title", "child", "items", "showelem", "packside",
                    "packanchor", "geometry", "defaulttext", "toplevel"]
         if "command" in kwargs:
             bindlist.append((self, kwargs["command"]))
@@ -78,7 +78,7 @@ class UI(observed_tree):
         self.repack()
         if "defaulttext" in kwargs:
             self.elem.insert(0, kwargs["defaulttext"])
-        if "show" in kwargs:
+        if "showelem" in kwargs:
             self.elem.show()
         if "name" in kwargs:
             uidict[kwargs["name"]] = self.elem
