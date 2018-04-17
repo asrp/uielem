@@ -188,7 +188,7 @@ class UI(observed_tree):
             if hasattr(child, "elem"):
                 child.elem.pack_forget()
         kwargs = {"side": self.kwargs["packside"],
-                  "anchor": self.kwargs.get("anchor"),
+                  "anchor": self.kwargs.get("packanchor"),
                   "in_": self.elem}
         for child in children:
             if hasattr(child, "elem"):
@@ -196,7 +196,7 @@ class UI(observed_tree):
                     child.elem.place(x=getattr(child, "geomx", 0),
                                      y=getattr(child, "geomy", 0),
                                      bordermode='outside',
-                                     anchor=kwargs["anchor"])
+                                     anchor=kwargs["packanchor"])
                 else:
                     child.elem.pack(**kwargs)
 
